@@ -27,7 +27,7 @@ function main() {
 			let ele = pa[i];
 			let index = i;
 			if (notFilterNames.indexOf(ele) !== -1) { // 如果是位移后目标文件夹 则不进行操作
-				break;
+				continue;
 			}
 			var info = fs.statSync(filePath + "/" + ele); // 判断是文件夹 还是文件
 			if (info.isDirectory()) {
