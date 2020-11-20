@@ -7,7 +7,18 @@ function main() {
 	const rootRealPath = path.resolve(__dirname);
 	const newDirName = 'newFile'; // 移动目标文件名
 	const newDirPath = path.resolve(__dirname + '/' + newDirName); // 新的文件路径
-	const filterFormatList = ['txt']; // 位移的文件后缀名
+	const filterFormatList = [
+		'mp4', 
+		'mkv', 
+		'zip', 
+		'avi', 
+		'rmvb', 
+		'rm', 
+		'mkv', 
+		'wvm', 
+		'rar', 
+		'ts',
+		'wmv']; // 位移的文件后缀名
 	const notFilterNames = [newDirName, 'filterFile.js']; // 不进行位移的文件 或者文件夹 或 文件格式
 	let moveFileCount = 0; // 位移文件总数
 	let eachFileCount = 0; // 遍历文件总数

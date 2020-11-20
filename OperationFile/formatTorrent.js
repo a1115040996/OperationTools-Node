@@ -1,7 +1,18 @@
 const fs = require('fs');
 const parseTorrent = require('parse-torrent');
 const path = require("path")
-const filterFileType = ['txt', 'jpg'];
+const filterFileType = [
+	'mp4', 
+	'mkv', 
+	'zip', 
+	'avi', 
+	'rmvb', 
+	'rm', 
+	'mkv', 
+	'wvm', 
+	'rar', 
+	'ts',
+	'wmv'];
 const newDirName = 'formatFile'; // 移动目标文件名
 const newDirPath = path.resolve(__dirname + '/' + newDirName); // 新的文件路径
 const rootRealPath = path.resolve(__dirname);
