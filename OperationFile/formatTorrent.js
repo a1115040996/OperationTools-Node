@@ -1,16 +1,17 @@
 const fs = require('fs');
 const parseTorrent = require('parse-torrent');
 const path = require("path")
+// 不进行更改名称操作的 文件类型
 const filterFileType = [
-	'mp4', 
-	'mkv', 
-	'zip', 
-	'avi', 
-	'rmvb', 
-	'rm', 
-	'mkv', 
-	'wvm', 
-	'rar', 
+	'mp4',
+	'mkv',
+	'zip',
+	'avi',
+	'rmvb',
+	'rm',
+	'mkv',
+	'wvm',
+	'rar',
 	'ts',
 	'wmv'];
 const newDirName = 'formatFile'; // 移动目标文件名
@@ -18,6 +19,8 @@ const newDirPath = path.resolve(__dirname + '/' + newDirName); // 新的文件�
 const rootRealPath = path.resolve(__dirname);
 const targetFileName = '';
 const unTargetFileName = '_______________________________________';
+// 过滤文件最小值
+const filterMinLength = 40; // mb
 
 main();
 
@@ -35,6 +38,22 @@ function createNewDir() {
 	if (!checkHasFile(rootRealPath, newDirName)) {
 		console.log(`如果没有${newDirName}文件夹 那么直接创建一个文件夹`);
 		fs.mkdirSync(rootRealPath + '/' + newDirName);
+	}
+}
+
+function isArray(data) {
+	return Object.prototype.toString.call(data) === '[object Array]'
+}
+
+function getNewFileName(fileName, fileSize) {
+	const fileType = fileName.toString().split('.').slice(-1)[0];
+	if (filterFileType.indexOf(fileType) !== -1 && fileSize / 1024 / 1024 > filterMinLength) {
+		console.log();
+		return targetFileName + fileName;
+	} else {
+		// return unTargetFileName + '.' + fileType
+		// 不需要的文件直接设置为空
+		return ''; 
 	}
 }
 
@@ -63,39 +82,27 @@ function main() {
 				var splitArea = ele.split('.');
 				var fileName = splitArea.slice(0, -1); // 不带有格式的文件名
 				var fileType = splitArea.slice(-1)[0]; // 文件格式
-				console.log('文件列表====>', );
 				// 如果是torrent文件
 				if (fileType === 'torrent') {
 					const torrentFileInfo = parseTorrent(fs.readFileSync(filePath));
 					let BaseFileInfo = torrentFileInfo.info;
-					BaseFileInfo.files.map((file) => {
-						// console.log('item===========>', file);
-						file.path.map((path, idx) => {
-							const fileType = path.toString().split('.').slice(-1)[0];
-							if (filterFileType.indexOf(fileType)!==-1) {
-								file.path[idx] = targetFileName + path;
+					let BaseFiles = BaseFileInfo.files || torrentFileInfo.files;
+					BaseFiles.map((file) => {
+						const keys = ['path', 'path.utf-8'];
+						const fileSize = file.length;
+						keys.map((key)=>{
+							if (isArray(file[key])) {
+								file[key].map((path, idx) => {
+									file[key][idx] = getNewFileName(path, fileSize);
+								});
 							} else {
-								file.path[idx] = unTargetFileName + '.' + fileType
+								file[key] = getNewFileName(path);
 							}
-							return path;
-						});
-						file['path.utf-8'].map((path, idx) => {
-							const fileType = path.toString().split('.').slice(-1)[0];
-							if (filterFileType.indexOf(fileType)!==-1) {
-								file['path.utf-8'][idx] = targetFileName + path;
-							} else {
-								file['path.utf-8'][idx] = unTargetFileName + '.' + fileType;
-							}
-							return path;
-						});
+						})
 						// console.log('file path====>', file)
 						return file;
 					});
-					// BaseFileInfo = renameFile(BaseFileInfo);
 					createNewFile(newDirPath, ele, BaseFileInfo);
-
-					// console.log('files=========>', newDirPath, ele, BaseFileInfo, BaseFileInfo.files);
-
 				} else {
 					// console.log('不是对应文件 不进行操作', fileName, fileType);
 				}
