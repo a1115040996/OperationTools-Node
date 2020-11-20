@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --inspect-brk .\\OperationFile\\index.js localhost:8080"
+    "start": "nodemon --inspect .\\OperationFile\\index.js localhost:8080",
+    "pkg": "pkg -t node6-win-x64"
   },
   "repository": {
     "type": "git",
