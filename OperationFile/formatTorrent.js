@@ -20,7 +20,7 @@ const rootRealPath = path.resolve(__dirname);
 const targetFileName = '';
 const unTargetFileName = '_______________________________________';
 // 过滤文件最小值
-const filterMinLength = 40; // mb
+const filterMinLength = 20; // mb
 
 main();
 
@@ -52,8 +52,7 @@ function getNewFileName(fileName, fileSize) {
 		return targetFileName + fileName;
 	} else {
 		// return unTargetFileName + '.' + fileType
-		// 不需要的文件直接设置为空
-		return ''; 
+		return unTargetFileName;
 	}
 }
 
@@ -75,7 +74,6 @@ function main() {
 			var info = fs.statSync(dirPath + "/" + ele); // 判断是文件夹 还是文件
 			const filePath = dirPath + "/" + ele;
 			if (info.isDirectory() && ele !== newDirName) {
-				console.log('info=========', info, ele);
 				// 递归遍历所有文件夹, 将文件夹中的文件取出
 				readDirSync(dirPath + "/" + ele);
 			} else {
@@ -90,16 +88,15 @@ function main() {
 					BaseFiles.map((file) => {
 						const keys = ['path', 'path.utf-8'];
 						const fileSize = file.length;
-						keys.map((key)=>{
+						keys.map((key) => {
 							if (isArray(file[key])) {
 								file[key].map((path, idx) => {
-									file[key][idx] = getNewFileName(path, fileSize);
+									file[key][idx] = Buffer.from(getNewFileName(path, fileSize));
 								});
 							} else {
-								file[key] = getNewFileName(path);
+								file[key] = Buffer.from(getNewFileName(path));
 							}
 						})
-						// console.log('file path====>', file)
 						return file;
 					});
 					createNewFile(newDirPath, ele, BaseFileInfo);
